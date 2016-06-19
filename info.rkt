@@ -6,3 +6,8 @@
   '("base"
     ))
 
+(define build-deps
+  '("scribble-lib"
+    "racket-doc"
+    ))
+
