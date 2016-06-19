@@ -2,6 +2,8 @@ hygienic-reader-extension [![Build Status](https://travis-ci.org/AlexKnauth/hygi
 ===
 A racket library for adding hygiene to reader extensions
 
+documentation: http://docs.racket-lang.org/hygienic-reader-extension/index.html
+
 ```racket
 (extend-reader reader-proc extend-readtable)  →  (-> A ... Any)
   reader-proc      : (-> A ... Any)
