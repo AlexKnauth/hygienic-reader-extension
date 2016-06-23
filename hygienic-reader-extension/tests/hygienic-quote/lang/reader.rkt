@@ -6,10 +6,6 @@
          lang-extension/meta-reader-util
          hygienic-reader-extension/extend-reader)
 
-;; add-quote : (-> Syntax Syntax)
-(define (add-quote stx)
-  #`(quote #,stx))
-
 ;; wrap-reader : (-> (-> A ... Any) (-> A ... Any))
 (define (wrap-reader reader-proc)
   (extend-reader reader-proc extend-readtable))
@@ -23,6 +19,10 @@
    wrap-reader ; for read-syntax
    identity))  ; for get-info
 
+;; add-quote : (-> Syntax Syntax)
+(define (add-quote stx)
+  #`(quote #,stx))
+
 ;; extend-readtable : (-> Readtable #:outer-scope (-> Syntax Syntax) Readtable)
 (define (extend-readtable rt #:outer-scope outer-scope)
   (make-readtable rt
@@ -30,7 +30,6 @@
 
 ;; quote-proc : (-> (-> Syntax Syntax) Readtable-Proc)
 (define ((quote-proc outer-scope) c in src ln col pos)
-  (hygienic-app #:outer-scope outer-scope
-                add-quote
-                (read-syntax/recursive src in)))
+  (hygienic-app add-quote (read-syntax/recursive src in)
+                #:outer-scope outer-scope))
 
