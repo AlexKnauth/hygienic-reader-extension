@@ -1,9 +1,8 @@
-#lang racket
+#lang lang-extension
+#:lang-extension hygienic-quote make-hygienic-quote-lang-reader
+#:lang-reader hygienic-quote-lang
 
-(provide (rename-out [-read read] [-read-syntax read-syntax] [-get-info get-info]))
-
-(require syntax/module-reader
-         lang-extension/lang-reader
+(require lang-extension/lang-reader
          lang-extension/meta-reader-util
          hygienic-reader-extension/extend-reader)
 
@@ -32,7 +31,4 @@
 (define ((quote-proc outer-scope) c in src ln col pos)
   (hygienic-app add-quote (read-syntax/recursive src in)
                 #:outer-scope outer-scope))
-
-(define/lang-reader [-read -read-syntax -get-info]
-  (lang-extension->lang-reader 'hygienic-quote make-hygienic-quote-lang-reader))
 
