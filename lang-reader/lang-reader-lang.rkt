@@ -5,7 +5,7 @@
 
 (require (only-in racket/base [#%module-begin -#%module-begin])
          syntax/parse/define
-         lang-extension/lang-reader
+         "lang-reader.rkt"
          )
 
 (define-simple-macro

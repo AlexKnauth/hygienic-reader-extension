@@ -2,8 +2,7 @@
 #:lang-extension hygienic-quote make-hygienic-quote-lang-reader
 #:lang-reader hygienic-quote-lang
 
-(require lang-extension/lang-reader
-         lang-extension/meta-reader-util
+(require lang-reader/lang-reader
          hygienic-reader-extension/extend-reader)
 
 ;; wrap-reader : (-> (-> A ... Any) (-> A ... Any))

@@ -6,7 +6,7 @@
 
 (require racket/unit
          (only-in syntax/module-reader make-meta-reader)
-         "lang-reader.rkt"
+         lang-reader/lang-reader
          )
 
 ;; make-meta-reader/lang-reader : make-meta-reader-args ... -> Lang-Reader

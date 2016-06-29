@@ -2,7 +2,7 @@
 
 (provide #%module-begin)
 
-(require lang-extension/lang-reader
+(require "lang-reader.rkt"
          (only-in "lang-reader-lang.rkt" [#%module-begin lang-reader-module-begin])
          syntax/parse/define
          )
