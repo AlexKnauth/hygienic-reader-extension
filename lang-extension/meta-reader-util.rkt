@@ -12,35 +12,35 @@
 ;; make-meta-reader/lang-reader : make-meta-reader-args ... -> Lang-Reader
 (define make-meta-reader/lang-reader (compose make-lang-reader make-meta-reader))
 
-(define-syntax-rule (?set! x v)
-  (unless x (set! x v)))
-
-(define-syntax-rule (fn-delay f-expr)
+(define-syntax-rule (unknown-fn this-name other-name)
   (λ args
-    (let ([f f-expr])
-      (unless f (error 'fn-delay "~s hasn't been initialized" 'f-expr))
-      (apply f args))))
+    (error 'fn-delay "~s cannot be called within ~s" 'other-name 'this-name)))
 
 ;; lang-extension->lang-reader : Symbol Lang-Extension -> Lang-Reader
 ;; A wrapper around make-meta-reader that deals with Lang-Readers
 (define (lang-extension->lang-reader name lang-extension)
-  (define ?read #f)
-  (define ?read-syntax #f)
-  (define ?get-info #f)
-  (define delayed-read (fn-delay -read))
-  (define delayed-read-syntax (fn-delay -read-syntax))
-  (define delayed-get-info (fn-delay -get-info))
-  (define result
-    (make-meta-reader/lang-reader
-     name
-     "language path"
-     lang-reader-module-paths
-     (λ (old-read) (?set! ?read old-read) delayed-read)
-     (λ (old-read-syntax) (?set! ?read-syntax old-read-syntax) delayed-read-syntax)
-     (λ (old-get-info) (?set! ?get-info old-get-info) delayed-get-info)))
-  (define/lang-reader [-read -read-syntax -get-info]
-    (lang-extension (make-lang-reader (fn-delay ?read) (fn-delay ?read-syntax) (fn-delay ?get-info))))
-  result)
+  (make-meta-reader/lang-reader
+   name
+   "language path"
+   lang-reader-module-paths
+   (λ (old-read)
+     (define/lang-reader [-read -read-syntax -get-info]
+       (lang-extension (make-lang-reader old-read
+                                         (unknown-fn 'read 'read-syntax)
+                                         (unknown-fn 'read 'get-info))))
+     -read)
+   (λ (old-read-syntax)
+     (define/lang-reader [-read -read-syntax -get-info]
+       (lang-extension (make-lang-reader (unknown-fn 'read-syntax 'read)
+                                         old-read-syntax
+                                         (unknown-fn 'read-syntax 'get-info))))
+     -read-syntax)
+   (λ (old-get-info)
+     (define/lang-reader [-read -read-syntax -get-info]
+       (lang-extension (make-lang-reader (unknown-fn 'get-info 'read)
+                                         (unknown-fn 'get-info 'read-syntax)
+                                         old-get-info)))
+     -get-info)))
 
 ;; From at-exp/lang/reader.rkt
 ;; https://github.com/racket/racket/blob/master/pkgs/at-exp-lib/at-exp/lang/reader.rkt#L19
