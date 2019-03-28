@@ -16,5 +16,5 @@
             (syntax-local-introduce #'it))
   (define x 42))
 
-(define-syntax-parser refer-to-it
-  [(_) (syntax-local-introduce #'it)])
+(define-syntax refer-to-it
+  (syntax-parser [(_) (syntax-local-introduce #'it)]))
